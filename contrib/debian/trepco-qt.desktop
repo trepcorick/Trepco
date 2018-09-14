@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Trepco
+Comment=Trepco P2P Cryptocurrency
+Comment[fr]=Trepco, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=Trepco, eşten eşe kriptografik sanal para birimi
+Exec=trepco-qt %u
+Terminal=false
+Type=Application
+Icon=trepco128
+MimeType=x-scheme-handler/trepco;
+Categories=Office;Finance;
