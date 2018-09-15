@@ -103,12 +103,12 @@ public:
          * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
          * a large 4-byte int at any alignment.
          */
-        pchMessageStart[0] = 0xd7;
-        pchMessageStart[1] = 0x70;
-        pchMessageStart[2] = 0xb8;
-        pchMessageStart[3] = 0xa6;
+        pchMessageStart[0] = 0xd1;
+        pchMessageStart[1] = 0x84;
+        pchMessageStart[2] = 0xc0;
+        pchMessageStart[3] = 0xb2;
         vAlertPubKey = ParseHex("047ff78a093ca911fbe3c7cd9b8b81976696d92e6ad3d987b00a4cc4841fe9689ed6902be9c6942ef77492d0531bf68cf2e53dc0ac683359f938a7a52a988ced8c");
-        nDefaultPort = 25001;
+        nDefaultPort = 27001;
         bnProofOfWorkLimit = ~uint256(0) >> 20; // Trepco starting difficulty is 1 / 2^12
         nSubsidyHalvingInterval = 64800;   // HALVING EVERY: 64800 BLOCKS
         nSubsidyBudgetPercentage = 5;      // Must be less than 100
@@ -138,7 +138,7 @@ public:
 
 
 
-        const char* pszTimestamp = "september 15 2018 trepco developers";
+        const char* pszTimestamp = "september 15 2018 trepco team of developers";
         CMutableTransaction txNew;
         txNew.vin.resize(1);
         txNew.vout.resize(1);
@@ -149,9 +149,33 @@ public:
         genesis.hashPrevBlock = 0;
         genesis.hashMerkleRoot = genesis.BuildMerkleTree();
         genesis.nVersion = 1;
-        genesis.nTime = 1536989528;
+        genesis.nTime = 1536994898;
         genesis.nBits = 0x1e0ffff0;
         genesis.nNonce = 3337044;
+
+        if(genesis.GetHash() != uint256("0x"))
+                {
+                    printf("Searching for genesis block...\n");
+                    uint256 hashTarget = CBigNum().SetCompact(genesis.nBits).getuint256();
+                    while(uint256(genesis.GetHash()) > hashTarget)
+                    {
+                        ++genesis.nNonce;
+                        if (genesis.nNonce == 0)
+                        {
+                            printf("NONCE WRAPPED, incrementing time");
+                            std::cout << std::string("NONCE WRAPPED, incrementing time:\n");
+                            ++genesis.nTime;
+                        }
+                        if (genesis.nNonce % 10000 == 0)
+                        {
+                            printf("Mainnet: nonce %08u: hash = %s \n", genesis.nNonce, genesis.GetHash().ToString().c_str(), genesis.hashMerkleRoot.ToString().c_str());
+                        }
+                    }
+                    printf("block.nTime = %u \n", genesis.nTime);
+                    printf("block.nNonce = %u \n", genesis.nNonce);
+                    printf("block.GetHash = %s\n", genesis.GetHash().ToString().c_str());
+                    printf("block.merklehash = %s\n", genesis.hashMerkleRoot.ToString().c_str());
+                }
 
         hashGenesisBlock = genesis.GetHash();
         assert(genesis.hashMerkleRoot == uint256("0xb7cd27afda9ac0f4f081a36dfd812c953c88541856fc00cbba1fc1c409da41c3"));
@@ -240,7 +264,7 @@ public:
         pchMessageStart[2] = 0x78;
         pchMessageStart[3] = 0xd4;
         vAlertPubKey = ParseHex("047ff78a093ca911fbe3c7cd9b8b81976696d92e6ad3d987b00a4cc4841fe9689ed6902be9c6942ef77492d0531bf68cf2e53dc0ac683359f938a7a52a988ced8c");
-        nDefaultPort = 25003;
+        nDefaultPort = 27003;
         nEnforceBlockUpgradeMajority = 51;
         nRejectBlockOutdatedMajority = 75;
         nToCheckBlockUpgradeMajority = 100;
