@@ -54,10 +54,10 @@ static void convertSeed6(std::vector<CAddress>& vSeedsOut, const SeedSpec6* data
 // + Contains no strange transactions
 static Checkpoints::MapCheckpoints mapCheckpoints =
     boost::assign::map_list_of
-    (0, uint256("0000094197874f83dfe5d9dd8a3f41f8339077492023e5b1954bf49e37af8aef"));
+    (0, uint256("00000b98922740df00b3901f57ccd37aacffe301de658ca83c0a5f875ae9a890"));
 static const Checkpoints::CCheckpointData data = {
     &mapCheckpoints,
-    1536927692, // * UNIX timestamp of last checkpoint block
+    1530742317, // * UNIX timestamp of last checkpoint block
     0,    // * total number of transactions between genesis and last checkpoint
                 //   (the tx=... number in the SetBestChain debug.log lines)
     2000        // * estimated number of transactions per day after checkpoint
@@ -68,7 +68,7 @@ static Checkpoints::MapCheckpoints mapCheckpointsTestnet =
     (0, uint256("0x"));
 static const Checkpoints::CCheckpointData dataTestnet = {
     &mapCheckpointsTestnet,
-    1536927692,
+    1530742317,
     0,
     250};
 
@@ -78,7 +78,7 @@ static Checkpoints::MapCheckpoints mapCheckpointsRegtest =
 //    (0, uint256("0x000001733877023e9a2751258b8119e420e153377ffd21c996af58c8cdceede5")); // quark
 static const Checkpoints::CCheckpointData dataRegtest = {
     &mapCheckpointsRegtest,
-    1536927692,
+    1530742317,
     0,
     100};
 
@@ -103,10 +103,10 @@ public:
          * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
          * a large 4-byte int at any alignment.
          */
-        pchMessageStart[0] = 0xc8;
-        pchMessageStart[1] = 0xf6;
-        pchMessageStart[2] = 0x94;
-        pchMessageStart[3] = 0x5a;
+        pchMessageStart[0] = 0xd7;
+        pchMessageStart[1] = 0x70;
+        pchMessageStart[2] = 0xb8;
+        pchMessageStart[3] = 0xa6;
         vAlertPubKey = ParseHex("047ff78a093ca911fbe3c7cd9b8b81976696d92e6ad3d987b00a4cc4841fe9689ed6902be9c6942ef77492d0531bf68cf2e53dc0ac683359f938a7a52a988ced8c");
         nDefaultPort = 25001;
         bnProofOfWorkLimit = ~uint256(0) >> 20; // Trepco starting difficulty is 1 / 2^12
@@ -138,7 +138,7 @@ public:
 
 
 
-        const char* pszTimestamp = "september 14 2018 trepco developers";
+        const char* pszTimestamp = "september 15 2018 trepco developers";
         CMutableTransaction txNew;
         txNew.vin.resize(1);
         txNew.vout.resize(1);
@@ -149,21 +149,45 @@ public:
         genesis.hashPrevBlock = 0;
         genesis.hashMerkleRoot = genesis.BuildMerkleTree();
         genesis.nVersion = 1;
-        genesis.nTime = 1536927692;
+        genesis.nTime = 1536989528;
         genesis.nBits = 0x1e0ffff0;
-        genesis.nNonce = 3385144;
+        genesis.nNonce = 3017405;
+
+        if(genesis.GetHash() != uint256("0x"))
+                {
+                    printf("Searching for genesis block...\n");
+                    uint256 hashTarget = CBigNum().SetCompact(genesis.nBits).getuint256();
+                    while(uint256(genesis.GetHash()) > hashTarget)
+                    {
+                        ++genesis.nNonce;
+                        if (genesis.nNonce == 0)
+                        {
+                            printf("NONCE WRAPPED, incrementing time");
+                            std::cout << std::string("NONCE WRAPPED, incrementing time:\n");
+                            ++genesis.nTime;
+                        }
+                        if (genesis.nNonce % 10000 == 0)
+                        {
+                            printf("Mainnet: nonce %08u: hash = %s \n", genesis.nNonce, genesis.GetHash().ToString().c_str(), genesis.hashMerkleRoot.ToString().c_str());
+                        }
+                    }
+                    printf("block.nTime = %u \n", genesis.nTime);
+                    printf("block.nNonce = %u \n", genesis.nNonce);
+                    printf("block.GetHash = %s\n", genesis.GetHash().ToString().c_str());
+                    printf("block.merklehash = %s\n", genesis.hashMerkleRoot.ToString().c_str());
+                }
 
         hashGenesisBlock = genesis.GetHash();
-        assert(genesis.hashMerkleRoot == uint256("0xe515cea30e13a2f77a78d676ea3602cd46e3c6e446d3540a228b208eaf538de8"));
-        assert(hashGenesisBlock == uint256("0x0000094197874f83dfe5d9dd8a3f41f8339077492023e5b1954bf49e37af8aef"));
+        assert(genesis.hashMerkleRoot == uint256("0xf79c08a6cb0023b7638597967a4a54b5321cbfa44c35aa99d5db0a660e0710d7"));
+        assert(hashGenesisBlock == uint256("0x00000b98922740df00b3901f57ccd37aacffe301de658ca83c0a5f875ae9a890"));
 
         // Zerocoin, activated never
         nZerocoinStartHeight = INT_MAX;
         nZerocoinStartTime = INT_MAX;
 
-        vSeeds.push_back(CDNSSeedData("0", "209.250.253.172"));             // Primary DNS Seeder
-        vSeeds.push_back(CDNSSeedData("1", "217.69.8.77"));      // Secondary DNS Seeder
-        vSeeds.push_back(CDNSSeedData("2", "45.32.156.97"));     // Third DNS Seeder
+        vSeeds.push_back(CDNSSeedData("0", "95.179.143.104"));             // Primary DNS Seeder
+        vSeeds.push_back(CDNSSeedData("1", "45.76.45.95"));      // Secondary DNS Seeder
+        vSeeds.push_back(CDNSSeedData("2", "45.76.88.62"));     // Third DNS Seeder
 
         // https://en.bitcoin.it/wiki/List_of_address_prefixes
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 66);     // starts with T
@@ -181,7 +205,7 @@ public:
         base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x88)(0xB2)(0x1E).convert_to_container<std::vector<unsigned char> >();
         base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x88)(0xAD)(0xE4).convert_to_container<std::vector<unsigned char> >();
         // 	BIP44 coin type is from https://github.com/satoshilabs/slips/blob/master/slip-0044.md
-        base58Prefixes[EXT_COIN_TYPE] = boost::assign::list_of(0x80)(0x00)(0x0b)(0x3c).convert_to_container<std::vector<unsigned char> >();
+        base58Prefixes[EXT_COIN_TYPE] = boost::assign::list_of(0x80)(0x40)(0x0b)(0x3c).convert_to_container<std::vector<unsigned char> >();
 
         convertSeed6(vFixedSeeds, pnSeed6_main, ARRAYLEN(pnSeed6_main));
 
